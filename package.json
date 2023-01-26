@@ -60,7 +60,7 @@
   "lint-staged": {
     "*.js": [
       "nmp run lint:fix",
-      "git addf"
+      "git add"
     ]
   }
 
