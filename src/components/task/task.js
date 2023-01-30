@@ -1,6 +1,6 @@
-import { Component } from "react";
-import { formatDistanceToNow } from "date-fns";
-import PropTypes from "prop-types";
+import { Component } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+import PropTypes from 'prop-types';
 
 export default class Task extends Component {
   state = {
@@ -18,51 +18,32 @@ export default class Task extends Component {
   };
 
   render() {
-    const {
-      label,
-      onDeleted,
-      onToggleDone,
-      done,
-      isChecked,
-      onRename,
-      isRename,
-      createDate,
-    } = this.props;
+    const { label, onDeleted, onToggleDone, done, isChecked, onRename, isRename, createDate } = this.props;
 
-    let classNames = "view";
+    let classNames = 'view';
     if (done) {
-      classNames = "completed";
+      classNames = 'completed';
     }
     if (isRename) {
       return (
         <form className={classNames} onSubmit={this.onSubmit}>
-          <input
-            className="new-todo"
-            autoFocus
-            value={this.state.label}
-            onChange={this.onLabelChandge}
-          />
+          <input className="new-todo" autoFocus value={this.state.label} onChange={this.onLabelChandge} />
         </form>
       );
     } else {
       return (
         <div className={classNames}>
-          <input
-            className="toggle"
-            type="checkbox"
-            checked={isChecked}
-            onChange={onToggleDone}
-          />
+          <input className="toggle" type="checkbox" checked={isChecked} onChange={onToggleDone} />
           <label>
             <span className="description" onClick={onToggleDone}>
               {label}
             </span>
             <span className="created">
-              {"created " +
+              {'created ' +
                 formatDistanceToNow(createDate, {
                   includeSeconds: true,
                 })}
-              {" ago"}
+              {' ago'}
             </span>
           </label>
           <button className="icon icon-edit" onClick={onRename}></button>

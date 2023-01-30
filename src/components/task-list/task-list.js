@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
+
 import Task from '../task';
 
-function TaskList({
-  data, onDeleted, onToggleDone, onRename, onNewLabel,
-}) {
+function TaskList({ data, onDeleted, onToggleDone, onRename, onNewLabel }) {
   const elements = data.map((el) => {
     const { id, ...itemProps } = el;
 

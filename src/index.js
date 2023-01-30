@@ -1,18 +1,18 @@
-import { createRoot } from "react-dom/client";
-import { Component } from "react";
+import { createRoot } from 'react-dom/client';
+import { Component } from 'react';
 
-import "./components/index.css";
+import './components/index.css';
 
-import Footer from "./components/footer";
-import TaskList from "./components/task-list";
-import NewTaskForm from "./components/new-task-form";
+import Footer from './components/footer';
+import TaskList from './components/task-list';
+import NewTaskForm from './components/new-task-form';
 
 class App extends Component {
   maxId = 100;
 
   state = {
     tododata: [],
-    activebutton: "all",
+    activebutton: 'all',
   };
 
   addItem = (task, date) => {
@@ -35,11 +35,11 @@ class App extends Component {
     });
   };
 
-  deleteAllItem = () => {
-    this.setState(({ tododata }) => {
-      const newArray = [...tododata.slice(0, 0)];
+  deleteItemCompleted = () => {
+    const newArr = [...this.state.tododata].filter((el) => !el.done);
+    this.setState(() => {
       return {
-        tododata: newArray,
+        tododata: newArr,
       };
     });
   };
@@ -62,11 +62,7 @@ class App extends Component {
   };
 
   newArray = (oldArray, newItem, idx) => {
-    const newArray = [
-      ...oldArray.slice(0, idx),
-      newItem,
-      ...oldArray.slice(idx + 1),
-    ];
+    const newArray = [...oldArray.slice(0, idx), newItem, ...oldArray.slice(idx + 1)];
 
     return newArray;
   };
@@ -117,11 +113,11 @@ class App extends Component {
   }
   filterButton(data, nameFilter) {
     switch (nameFilter) {
-      case "all":
+      case 'all':
         return data;
-      case "active":
+      case 'active':
         return data.filter((el) => !el.done);
-      case "completed":
+      case 'completed':
         return data.filter((el) => el.done);
       default:
         return data;
@@ -150,7 +146,7 @@ class App extends Component {
           />
           <Footer
             todoCount={todoCount}
-            onDeleteAllItem={this.deleteAllItem}
+            onDeleteCompletedItem={this.deleteItemCompleted}
             clickButtonFilter={this.clickButtonFilter}
             activeButton={activebutton}
           />
@@ -160,6 +156,6 @@ class App extends Component {
   }
 }
 
-const container = document.getElementById("root");
+const container = document.getElementById('root');
 
 createRoot(container).render(<App />);
