@@ -37,11 +37,9 @@ class App extends Component {
 
   deleteItemCompleted = () => {
     const newArr = [...this.state.tododata].filter((el) => !el.done);
-    this.setState(() => {
-      return {
+    this.setState(() => ({
         tododata: newArr,
-      };
-    });
+      }));
   };
 
   onNewLabel = (newLabel, id) => {
@@ -111,6 +109,7 @@ class App extends Component {
       createDate: date,
     };
   }
+
   filterButton(data, nameFilter) {
     switch (nameFilter) {
       case 'all':
@@ -123,6 +122,7 @@ class App extends Component {
         return data;
     }
   }
+
   render() {
     const { tododata, activebutton } = this.state;
     const doneCount = tododata.filter((el) => el.done).length;

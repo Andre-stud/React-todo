@@ -7,6 +7,7 @@ export default class TaskFilter extends Component {
     { name: 'active', label: 'Active' },
     { name: 'completed', label: 'Completed' },
   ];
+
   render() {
     const { clickButtonFilter, activeButton } = this.props;
     const buttonFilter = this.buttons.map(({ name, label }) => {
@@ -15,7 +16,7 @@ export default class TaskFilter extends Component {
 
       return (
         <li key={name}>
-          <button className={classButtonFilter} onClick={() => clickButtonFilter(name)}>
+          <button type="button" className={classButtonFilter} onClick={() => clickButtonFilter(name)}>
             {label}
           </button>
         </li>
@@ -29,4 +30,9 @@ export default class TaskFilter extends Component {
 TaskFilter.propTypes = {
   clickButtonFilter: PropTypes.func,
   activeButton: PropTypes.string,
+};
+
+TaskFilter.defaultProps = {
+  clickButtonFilter: undefined,
+  activeButton: 'all',
 };

@@ -18,7 +18,9 @@ export default class Task extends Component {
   };
 
   render() {
-    const { label, onDeleted, onToggleDone, done, isChecked, onRename, isRename, createDate } = this.props;
+    const {
+ label, onDeleted, onToggleDone, done, isChecked, onRename, isRename, createDate,
+} = this.props;
 
     let classNames = 'view';
     if (done) {
@@ -30,27 +32,26 @@ export default class Task extends Component {
           <input className="new-todo" autoFocus value={this.state.label} onChange={this.onLabelChandge} />
         </form>
       );
-    } else {
+    }
       return (
         <div className={classNames}>
           <input className="toggle" type="checkbox" checked={isChecked} onChange={onToggleDone} />
           <label>
-            <span className="description" onClick={onToggleDone}>
+            <span className="description" onClick={onToggleDone} aria-hidden="true">
               {label}
             </span>
             <span className="created">
-              {'created ' +
+              {`created ${
                 formatDistanceToNow(createDate, {
                   includeSeconds: true,
-                })}
+                })}`}
               {' ago'}
             </span>
           </label>
-          <button className="icon icon-edit" onClick={onRename}></button>
-          <button className="icon icon-destroy" onClick={onDeleted}></button>
+          <button type="button" aria-label="icon-edit" className="icon icon-edit" onClick={onRename} />
+          <button type="button" aria-label="icon-destroy" className="icon icon-destroy" onClick={onDeleted} />
         </div>
       );
-    }
   }
 }
 
@@ -62,4 +63,14 @@ Task.propTypes = {
   isChecked: PropTypes.bool,
   onRename: PropTypes.func,
   isRename: PropTypes.bool,
+};
+
+Task.defaultProps = {
+  label: '',
+  onDeleted: undefined,
+  onToggleDone: undefined,
+  done: false,
+  isChecked: false,
+  onRename: undefined,
+  isRename: false,
 };
