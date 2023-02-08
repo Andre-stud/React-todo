@@ -60,8 +60,8 @@
   },
   "lint-staged": {
     "*.js": [
-      "nmp run lint:fix",
-      "nmp run format",
+      "npm run lint:fix",
+      "npm run format",
       "git add"
     ]
   }

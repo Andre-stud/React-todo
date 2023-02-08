@@ -6,10 +6,11 @@
     "ignorePatterns": ["node_modules", "dist", "build"],
  
     "extends": ["airbnb",
-      "eslint:recommended",
+      "plugin:react-hooks/recommended",
       "plugin:react/recommended",
       "plugin:import/errors",
-      "plugin:import/warnings"
+      "plugin:import/warnings",
+      "prettier"
     ],
     "parserOptions": {
       "ecmaFeatures": {
@@ -18,7 +19,7 @@
       "ecmaVersion": "latest",
       "sourceType": "module"
     },
-    "plugins": ["react", "import"],
+    "plugins": ["react", "import", "jsx-a11y"],
     "rules": {
       "react/jsx-props-no-spreading": 0,
       "react/state-in-constructor": "off",
