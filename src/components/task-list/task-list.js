@@ -2,9 +2,7 @@ import PropTypes from 'prop-types';
 
 import Task from '../task';
 
-function TaskList({
- data, onDeleted, onToggleDone, onRename, onNewLabel, onChandgeTime
-}) {
+function TaskList({ data, onDeleted, onToggleDone, onRename, onNewLabel, onChandgeTime }) {
   const elements = data.map((el) => {
     const { id, ...itemProps } = el;
 

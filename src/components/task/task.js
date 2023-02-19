@@ -17,63 +17,59 @@ export default class Task extends Component {
   intervalId;
 
   componentDidUpdate(prevProps, prevState) {
-    
     if (this.state.workCount !== prevState.workCount) {
-      if(this.state.workCount && !this.state.isTimer){
-
+      if (this.state.workCount && !this.state.isTimer) {
         this.intervalId = setInterval(() => {
           if (!this.state.workCount || this.props.done) {
             this.setState({
-              workCount: false
+              workCount: false,
             });
             clearInterval(this.intervalId);
           }
-        
+
           this.seconds++;
-          if(this.seconds === 60){
+          if (this.seconds === 60) {
             this.minutes++;
             this.seconds = 0;
           }
 
-          this.props.onChandgeTime(this.props.id, this.minutes, this.seconds );
-          this.setState({count: `${this.minutes}:${this.seconds}`});
-          
+          this.props.onChandgeTime(this.props.id, this.minutes, this.seconds);
+          this.setState({ count: `${this.minutes}:${this.seconds}` });
         }, 1000);
       }
 
-      if(this.state.workCount && this.state.isTimer){
-
+      if (this.state.workCount && this.state.isTimer) {
         this.intervalId = setInterval(() => {
           if (!this.state.workCount || this.props.done) {
             this.setState({
-              workCount: false
+              workCount: false,
             });
             clearInterval(this.intervalId);
           }
-        
+
           this.seconds--;
-          if(this.seconds === -1){
+          if (this.seconds === -1) {
             this.seconds = 0;
-            if(this.minutes >= 1){
+            if (this.minutes >= 1) {
               this.minutes--;
               this.seconds = 59;
-            }else{
+            } else {
               clearInterval(this.intervalId);
             }
           }
-          this.props.onChandgeTime(this.props.id, this.minutes, this.seconds );
-          this.setState({count: `${this.minutes}:${this.seconds}`});
+          this.props.onChandgeTime(this.props.id, this.minutes, this.seconds);
+          this.setState({ count: `${this.minutes}:${this.seconds}` });
         }, 1000);
       }
     }
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearInterval(this.intervalId);
   }
 
   onLabelChandge = (e) => {
-    this.setState({ taskLabel: e.target.value });    
+    this.setState({ taskLabel: e.target.value });
   };
 
   onSubmit = (e) => {
@@ -82,27 +78,24 @@ export default class Task extends Component {
     this.props.onRename(this.props.id);
   };
 
-  play = () =>{
-    if(!this.props.done){
+  play = () => {
+    if (!this.props.done) {
       this.setState({
-        workCount: true
+        workCount: true,
       });
     }
   };
 
-  stop = () =>{
+  stop = () => {
     this.setState({
-      workCount: false
+      workCount: false,
     });
   };
 
   render() {
+    const { onDeleted, onToggleDone, done, isChecked, onRename, isRename, createDate } = this.props;
 
-    const {
-  onDeleted, onToggleDone, done, isChecked, onRename, isRename, createDate,
-          } = this.props;
-
-const {taskLabel, count} = this.state;
+    const { taskLabel, count } = this.state;
 
     let classNames = 'view';
     if (done) {
@@ -115,26 +108,32 @@ const {taskLabel, count} = this.state;
         </form>
       );
     }
-      return (
-        <div className={classNames}>
-          <input className="toggle" type="checkbox" checked={isChecked} onChange={onToggleDone} />
-          <label htmlFor={`${this.props.id}`}>
-            <span className="description" onClick={onToggleDone} aria-hidden="true">
-              {taskLabel}
-            </span>
-            <span className='timer'>
-              <button type="button" aria-label="icon icon-play" className="icon icon-play" onClick={this.play} />
-              <button type="button" id={`${this.props.id}`} aria-label="icon icon-pause" className="icon icon-pause" onClick={this.stop} />
-              {count}
-            </span>
-            <span className="description">
-              {`created ${formatDistanceToNow(createDate, {includeSeconds: true, })} ago`}
-            </span>
-          </label>
-          <button type="button" aria-label="icon-edit" className="icon icon-edit" onClick={onRename} />
-          <button type="button" aria-label="icon-destroy" className="icon icon-destroy" onClick={onDeleted} />
-        </div>
-      );
+    return (
+      <div className={classNames}>
+        <input className="toggle" type="checkbox" checked={isChecked} onChange={onToggleDone} />
+        <label htmlFor={`${this.props.id}`}>
+          <span className="description" onClick={onToggleDone} aria-hidden="true">
+            {taskLabel}
+          </span>
+          <span className="timer">
+            <button type="button" aria-label="icon icon-play" className="icon icon-play" onClick={this.play} />
+            <button
+              type="button"
+              id={`${this.props.id}`}
+              aria-label="icon icon-pause"
+              className="icon icon-pause"
+              onClick={this.stop}
+            />
+            {count}
+          </span>
+          <span className="description">
+            {`created ${formatDistanceToNow(createDate, { includeSeconds: true })} ago`}
+          </span>
+        </label>
+        <button type="button" aria-label="icon-edit" className="icon icon-edit" onClick={onRename} />
+        <button type="button" aria-label="icon-destroy" className="icon icon-destroy" onClick={onDeleted} />
+      </div>
+    );
   }
 }
 

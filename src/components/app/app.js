@@ -35,8 +35,8 @@ export default class App extends Component {
   deleteItemCompleted = () => {
     const newArr = [...this.state.tododata].filter((el) => !el.done);
     this.setState(() => ({
-        tododata: newArr,
-      }));
+      tododata: newArr,
+    }));
   };
 
   onNewLabel = (newLabel, id) => {
@@ -122,7 +122,7 @@ export default class App extends Component {
       createDate: date,
       minutes,
       seconds,
-      isTimer
+      isTimer,
     };
   }
 
