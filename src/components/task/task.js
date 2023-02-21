@@ -68,6 +68,18 @@ export default class Task extends Component {
     clearInterval(this.intervalId);
   }
 
+  onKeyDown = (e) => {
+    if (e.keyCode === 27) {
+      this.setState({ taskLabel: this.props.label });
+      this.props.onRename(this.props.id);
+    }
+  };
+
+  onBlur = () => {
+    this.setState({ taskLabel: this.props.label });
+    this.props.onRename(this.props.id);
+  };
+
   onLabelChandge = (e) => {
     this.setState({ taskLabel: e.target.value });
   };
@@ -104,7 +116,14 @@ export default class Task extends Component {
     if (isRename) {
       return (
         <form className={classNames} onSubmit={this.onSubmit}>
-          <input className="new-todo" autoFocus value={taskLabel} onChange={this.onLabelChandge} />
+          <input
+            className="new-todo"
+            autoFocus
+            onBlur={this.onBlur}
+            onKeyDown={this.onKeyDown}
+            value={taskLabel}
+            onChange={this.onLabelChandge}
+          />
         </form>
       );
     }

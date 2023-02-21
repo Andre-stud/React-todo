@@ -236,6 +236,7 @@ body {
 
 .todo-list li .view {
   position: relative;
+  margin-bottom: 0px;
 }
 
 .todo-list li label .description {
@@ -463,4 +464,8 @@ input::-webkit-inner-spin-button {
   /* display: none; <- Crashes Chrome on hover */
   -webkit-appearance: none;
   margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.disnone {
+  display: none;
 }

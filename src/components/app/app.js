@@ -126,25 +126,11 @@ export default class App extends Component {
     };
   }
 
-  filterButton(data, nameFilter) {
-    switch (nameFilter) {
-      case 'all':
-        return data;
-      case 'active':
-        return data.filter((el) => !el.done);
-      case 'completed':
-        return data.filter((el) => el.done);
-      default:
-        return data;
-    }
-  }
-
   render() {
     const { tododata, activebutton } = this.state;
     const doneCount = tododata.filter((el) => el.done).length;
     const todoCount = tododata.length - doneCount;
 
-    const visibleItems = this.filterButton(tododata, activebutton);
     this.clickButtonFilter = (name) => {
       this.setState({ activebutton: name });
     };
@@ -154,12 +140,13 @@ export default class App extends Component {
         <NewTaskForm onItemAdded={this.addItem} />
         <section className="main">
           <TaskList
-            data={visibleItems}
+            data={tododata}
             onDeleted={this.deleteItem}
             onToggleDone={this.onToggleDone}
             onRename={this.onRename}
             onNewLabel={this.onNewLabel}
             onChandgeTime={this.onChandgeTime}
+            activeButton={activebutton}
           />
           <Footer
             todoCount={todoCount}
