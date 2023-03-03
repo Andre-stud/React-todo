@@ -1,159 +1,153 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 
-export default class Task extends Component {
-  state = {
-    taskLabel: this.props.label,
-    count: `${this.props.minutes}:${this.props.seconds}`,
+export default function Task({
+  label,
+  seconds,
+  minutes,
+  isTimer,
+  id,
+  done,
+  isChecked,
+  isRename,
+  createDate,
+
+  onDeleted,
+  onToggleDone,
+  onRename,
+  onChandgeTime,
+}) {
+  let timerSeconds = seconds;
+  let timerMinutes = minutes;
+
+  const [taskState, setTaskState] = useState({
+    taskLabel: label,
+    submitLabel: label,
+    count: `${timerMinutes}:${timerSeconds}`,
     workCount: false,
-    isTimer: this.props.isTimer,
-  };
+    isTimer,
+  });
 
-  seconds = this.props.seconds;
+  const { taskLabel, count, workCount } = taskState;
 
-  minutes = this.props.minutes;
+  let intervalId;
 
-  intervalId;
+  useEffect(() => {
+    if (workCount && !isTimer) {
+      intervalId = setInterval(() => {
+        timerSeconds++;
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.workCount !== prevState.workCount) {
-      if (this.state.workCount && !this.state.isTimer) {
-        this.intervalId = setInterval(() => {
-          if (!this.state.workCount || this.props.done) {
-            this.setState({
-              workCount: false,
-            });
-            clearInterval(this.intervalId);
-          }
+        if (timerSeconds === 60) {
+          timerMinutes++;
 
-          this.seconds++;
-          if (this.seconds === 60) {
-            this.minutes++;
-            this.seconds = 0;
-          }
+          timerSeconds = 0;
+        }
 
-          this.props.onChandgeTime(this.props.id, this.minutes, this.seconds);
-          this.setState({ count: `${this.minutes}:${this.seconds}` });
-        }, 1000);
-      }
-
-      if (this.state.workCount && this.state.isTimer) {
-        this.intervalId = setInterval(() => {
-          if (!this.state.workCount || this.props.done) {
-            this.setState({
-              workCount: false,
-            });
-            clearInterval(this.intervalId);
-          }
-
-          this.seconds--;
-          if (this.seconds === -1) {
-            this.seconds = 0;
-            if (this.minutes >= 1) {
-              this.minutes--;
-              this.seconds = 59;
-            } else {
-              clearInterval(this.intervalId);
-            }
-          }
-          this.props.onChandgeTime(this.props.id, this.minutes, this.seconds);
-          this.setState({ count: `${this.minutes}:${this.seconds}` });
-        }, 1000);
-      }
+        onChandgeTime(id, timerMinutes, timerSeconds);
+        setTaskState({ ...taskState, count: `${timerMinutes}:${timerSeconds}` });
+      }, 1000);
     }
-  }
 
-  componentWillUnmount() {
-    clearInterval(this.intervalId);
-  }
+    if (workCount && isTimer) {
+      intervalId = setInterval(() => {
+        timerSeconds--;
+        if (timerSeconds === -1) {
+          timerSeconds = 0;
+          if (timerMinutes >= 1) {
+            timerMinutes--;
+            timerSeconds = 59;
+          } else {
+            clearInterval(intervalId);
+          }
+        }
+        onChandgeTime(id, timerMinutes, timerSeconds);
+        setTaskState({ ...taskState, count: `${timerMinutes}:${timerSeconds}` });
+      }, 1000);
+    }
+    return () => clearInterval(intervalId);
+  }, [taskState.workCount, isChecked]);
 
-  onKeyDown = (e) => {
+  const onKeyDown = (e) => {
     if (e.keyCode === 27) {
-      this.setState({ taskLabel: this.props.label });
-      this.props.onRename(this.props.id);
+      setTaskState({ ...taskState, taskLabel: taskState.submitLabel });
+      onRename(id);
     }
   };
 
-  onBlur = () => {
-    this.setState({ taskLabel: this.props.label });
-    this.props.onRename(this.props.id);
+  const onBlur = () => {
+    setTaskState({ ...taskState, taskLabel: taskState.submitLabel });
+    onRename(id);
   };
 
-  onLabelChandge = (e) => {
-    this.setState({ taskLabel: e.target.value });
+  const onLabelChandge = (e) => {
+    setTaskState({ ...taskState, taskLabel: e.target.value });
   };
 
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    this.props.onNewLabel(this.state.taskLabel, this.props.id);
-    this.props.onRename(this.props.id);
+    setTaskState({ ...taskState, submitLabel: taskState.taskLabel });
+    onRename(id);
   };
 
-  play = () => {
-    if (!this.props.done) {
-      this.setState({
-        workCount: true,
-      });
+  const play = () => {
+    if (!done) {
+      setTaskState({ ...taskState, workCount: true });
     }
   };
 
-  stop = () => {
-    this.setState({
-      workCount: false,
-    });
+  const stop = () => {
+    setTaskState({ ...taskState, workCount: false });
   };
 
-  render() {
-    const { onDeleted, onToggleDone, done, isChecked, onRename, isRename, createDate } = this.props;
+  const checked = () => {
+    setTaskState({ ...taskState, workCount: false });
+    onToggleDone(id);
+  };
 
-    const { taskLabel, count } = this.state;
+  const changeName = () => {
+    setTaskState({ ...taskState, workCount: false });
+    onRename(id);
+  };
 
-    let classNames = 'view';
-    if (done) {
-      classNames = 'completed';
-    }
-    if (isRename) {
-      return (
-        <form className={classNames} onSubmit={this.onSubmit}>
-          <input
-            className="new-todo"
-            autoFocus
-            onBlur={this.onBlur}
-            onKeyDown={this.onKeyDown}
-            value={taskLabel}
-            onChange={this.onLabelChandge}
-          />
-        </form>
-      );
-    }
+  let classNames = 'view';
+  if (done) {
+    classNames = 'completed';
+  }
+  if (isRename) {
     return (
-      <div className={classNames}>
-        <input className="toggle" type="checkbox" checked={isChecked} onChange={onToggleDone} />
-        <label htmlFor={`${this.props.id}`}>
-          <span className="description" onClick={onToggleDone} aria-hidden="true">
-            {taskLabel}
-          </span>
-          <span className="timer">
-            <button type="button" aria-label="icon icon-play" className="icon icon-play" onClick={this.play} />
-            <button
-              type="button"
-              id={`${this.props.id}`}
-              aria-label="icon icon-pause"
-              className="icon icon-pause"
-              onClick={this.stop}
-            />
-            {count}
-          </span>
-          <span className="description">
-            {`created ${formatDistanceToNow(createDate, { includeSeconds: true })} ago`}
-          </span>
-        </label>
-        <button type="button" aria-label="icon-edit" className="icon icon-edit" onClick={onRename} />
-        <button type="button" aria-label="icon-destroy" className="icon icon-destroy" onClick={onDeleted} />
-      </div>
+      <form className={classNames} onSubmit={onSubmit}>
+        <input
+          className="new-todo"
+          autoFocus
+          onBlur={onBlur}
+          onKeyDown={onKeyDown}
+          value={taskLabel}
+          onChange={onLabelChandge}
+        />
+      </form>
     );
   }
+  return (
+    <div className={classNames}>
+      <input className="toggle" type="checkbox" onChange={checked} checked={isChecked} />
+      <label htmlFor={id}>
+        <span className="description" onClick={checked} aria-hidden="true">
+          {taskLabel}
+        </span>
+        <span className="timer">
+          <button type="button" aria-label="icon icon-play" className="icon icon-play" onClick={play} />
+          <button type="button" id={id} aria-label="icon icon-pause" className="icon icon-pause" onClick={stop} />
+          {count}
+        </span>
+        <span className="description">
+          {`created ${formatDistanceToNow(createDate, { includeSeconds: true })} ago`}
+        </span>
+      </label>
+      <button type="button" aria-label="icon-edit" className="icon icon-edit" onClick={changeName} />
+      <button type="button" aria-label="icon-destroy" className="icon icon-destroy" onClick={onDeleted} />
+    </div>
+  );
 }
 
 Task.propTypes = {

@@ -21,6 +21,7 @@
     },
     "plugins": ["react", "import", "jsx-a11y"],
     "rules": {
+      "react-hooks/exhaustive-deps": "off",
       "react/jsx-props-no-spreading": 0,
       "react/state-in-constructor": "off",
       "jsx-a11y/no-autofocus": "off",

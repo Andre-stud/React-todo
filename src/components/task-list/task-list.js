@@ -1,9 +1,13 @@
 import PropTypes from 'prop-types';
+import { useContext } from 'react';
 
+import Context from '../../context';
 import Task from '../task';
 
-function TaskList({ data, onDeleted, onToggleDone, onRename, onNewLabel, onChandgeTime, activeButton }) {
-  const elements = data.map((el) => {
+function TaskList() {
+  const { todoData, deleteItem, onToggleDone, onRename, onChandgeTime, activeButton } = useContext(Context);
+
+  const elements = todoData.map((el) => {
     const { id, ...itemProps } = el;
 
     let displayClass;
@@ -23,10 +27,9 @@ function TaskList({ data, onDeleted, onToggleDone, onRename, onNewLabel, onChand
         <Task
           {...itemProps}
           id={id}
-          onDeleted={() => onDeleted(id)}
+          onDeleted={() => deleteItem(id)}
           onToggleDone={() => onToggleDone(id)}
           onRename={() => onRename(id)}
-          onNewLabel={onNewLabel}
           onChandgeTime={onChandgeTime}
         />
       </li>
