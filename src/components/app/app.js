@@ -30,77 +30,92 @@ export default function App() {
     });
   };
 
-  const deleteItem = (id) => {
-    setTodoData(() => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      return [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
-    });
-  };
 
-  const deleteItemCompleted = () => {
-    const newArr = [...todoData].filter((el) => !el.done);
-    setTodoData(() => newArr);
-  };
+
+
 
   const newArray = (oldArray, newItem, idx) => [...oldArray.slice(0, idx), newItem, ...oldArray.slice(idx + 1)];
 
-  const onRename = (id) => {
-    setTodoData(() => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      const oldItem = todoData[idx];
-      const newItem = {
-        ...oldItem,
 
-        isRename: !oldItem.isRename,
-      };
 
-      return newArray(todoData, newItem, idx);
-    });
-  };
 
-  const onToggleDone = (id) => {
-    setTodoData(() => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      const oldItem = todoData[idx];
-      const newItem = {
-        ...oldItem,
-        done: !oldItem.done,
-        isChecked: !oldItem.isChecked,
-      };
-
-      return newArray(todoData, newItem, idx);
-    });
-  };
-
-  const onChandgeTime = (id, minutes, seconds) => {
-    // eslint-disable-next-line no-shadow
-    setTodoData((todoData) => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      const oldItem = todoData[idx];
-      const newItem = {
-        ...oldItem,
-        minutes,
-        seconds,
-      };
-
-      return newArray(todoData, newItem, idx);
-    });
-  };
+  
 
   const doneCount = todoData.filter((el) => el.done).length;
   const todoCount = todoData.length - doneCount;
 
-  const clickButtonFilter = (name) => {
-    setActiveButton(name);
-  };
+
 
   const footer = useMemo(
-    () => ({ todoCount, deleteItemCompleted, clickButtonFilter, activeButton }),
-    [todoCount, activeButton]
+    () =>{
+      const deleteItemCompleted = () => {
+        const newArr = [...todoData].filter((el) => !el.done);
+        setTodoData(() => newArr);
+      };
+      const clickButtonFilter = (name) => {
+        setActiveButton(name);
+      };
+     return ({ todoCount, deleteItemCompleted, clickButtonFilter, activeButton });
+    } ,
+    [todoCount, activeButton, todoData]
   );
   const taskList = useMemo(
-    () => ({ todoData, deleteItem, onToggleDone, onRename, onChandgeTime, activeButton }),
-    [todoData, activeButton]
+    () =>{
+
+      const onChandgeTime = (id, minutes, seconds) => {
+        // eslint-disable-next-line no-shadow
+        setTodoData((todoData) => {
+          const idx = todoData.findIndex((el) => el.id === id);
+          const oldItem = todoData[idx];
+          const newItem = {
+            ...oldItem,
+            minutes,
+            seconds,
+          };
+    
+          return newArray(todoData, newItem, idx);
+        });
+      };
+
+      const onToggleDone = (id) => {
+        setTodoData(() => {
+          const idx = todoData.findIndex((el) => el.id === id);
+          const oldItem = todoData[idx];
+          const newItem = {
+            ...oldItem,
+            done: !oldItem.done,
+            isChecked: !oldItem.isChecked,
+          };
+    
+          return newArray(todoData, newItem, idx);
+        });
+      };
+
+      const onRename = (id) => {
+        setTodoData(() => {
+          const idx = todoData.findIndex((el) => el.id === id);
+          const oldItem = todoData[idx];
+          const newItem = {
+            ...oldItem,
+    
+            isRename: !oldItem.isRename,
+          };
+    
+          return newArray(todoData, newItem, idx);
+        });
+      };
+    
+      const deleteItem = (id) => {
+        setTodoData(() => {
+          const idx = todoData.findIndex((el) => el.id === id);
+          return [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
+        });
+      };
+
+
+     return ({ todoData, deleteItem, onToggleDone, onRename, onChandgeTime, activeButton });
+    } ,
+    [todoData,   activeButton]
   );
   return (
     <section className="todoapp">

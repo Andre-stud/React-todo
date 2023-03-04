@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect} from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 
@@ -18,22 +18,25 @@ export default function Task({
   onRename,
   onChandgeTime,
 }) {
-  let timerSeconds = seconds;
-  let timerMinutes = minutes;
+
+  
 
   const [taskState, setTaskState] = useState({
     taskLabel: label,
     submitLabel: label,
-    count: `${timerMinutes}:${timerSeconds}`,
+    count: `${minutes}:${seconds}`,
     workCount: false,
     isTimer,
   });
 
   const { taskLabel, count, workCount } = taskState;
-
-  let intervalId;
+  
+  let timerMinutes = minutes;
 
   useEffect(() => {
+
+    let intervalId;
+    let timerSeconds = seconds;
     if (workCount && !isTimer) {
       intervalId = setInterval(() => {
         timerSeconds++;
@@ -45,7 +48,7 @@ export default function Task({
         }
 
         onChandgeTime(id, timerMinutes, timerSeconds);
-        setTaskState({ ...taskState, count: `${timerMinutes}:${timerSeconds}` });
+        setTaskState(()=>({ ...taskState, count: `${timerMinutes}:${timerSeconds}` }));
       }, 1000);
     }
 
@@ -62,11 +65,12 @@ export default function Task({
           }
         }
         onChandgeTime(id, timerMinutes, timerSeconds);
-        setTaskState({ ...taskState, count: `${timerMinutes}:${timerSeconds}` });
+        setTaskState(()=>({ ...taskState, count: `${timerMinutes}:${timerSeconds}` }));
       }, 1000);
     }
     return () => clearInterval(intervalId);
-  }, [taskState.workCount, isChecked]);
+  }, [workCount, isChecked, seconds, isTimer, id, timerMinutes, onChandgeTime, taskState]);
+
 
   const onKeyDown = (e) => {
     if (e.keyCode === 27) {
