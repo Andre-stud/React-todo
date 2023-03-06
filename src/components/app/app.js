@@ -1,13 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 
 import Footer from '../footer';
 import TaskList from '../task-list';
 import NewTaskForm from '../new-task-form';
-import Context from '../../context';
 
 export default function App() {
-  const [todoData, setTodoData] = useState([]);
-  const [activeButton, setActiveButton] = useState('all');
+  const [taskListData, setTaskListData] = useState([]);
+  const [activeButtonFilter, setActiveButtonFilter] = useState('all');
   const [maxId, setMaxId] = useState(100);
 
   const createTodoItem = (label, date, minutes, seconds, isTimer) => ({
@@ -23,110 +22,93 @@ export default function App() {
   });
 
   const addItem = (task, date, minutes, seconds, isTimer) => {
-    setTodoData(() => {
+    setTaskListData(() => {
       const element = createTodoItem(task, date, minutes, seconds, isTimer);
       setMaxId(maxId + 1);
-      return [...todoData, element];
+      return [...taskListData, element];
     });
   };
 
-
-
-
-
   const newArray = (oldArray, newItem, idx) => [...oldArray.slice(0, idx), newItem, ...oldArray.slice(idx + 1)];
 
+  const doneCount = taskListData.filter((el) => el.done).length;
+  const todoCount = taskListData.length - doneCount;
 
-
-
-  
-
-  const doneCount = todoData.filter((el) => el.done).length;
-  const todoCount = todoData.length - doneCount;
-
-
-
-  const footer = useMemo(
-    () =>{
-      const deleteItemCompleted = () => {
-        const newArr = [...todoData].filter((el) => !el.done);
-        setTodoData(() => newArr);
-      };
-      const clickButtonFilter = (name) => {
-        setActiveButton(name);
-      };
-     return ({ todoCount, deleteItemCompleted, clickButtonFilter, activeButton });
-    } ,
-    [todoCount, activeButton, todoData]
-  );
-  const taskList = useMemo(
-    () =>{
-
-      const onChandgeTime = (id, minutes, seconds) => {
-        // eslint-disable-next-line no-shadow
-        setTodoData((todoData) => {
-          const idx = todoData.findIndex((el) => el.id === id);
-          const oldItem = todoData[idx];
-          const newItem = {
-            ...oldItem,
-            minutes,
-            seconds,
-          };
-    
-          return newArray(todoData, newItem, idx);
-        });
+  const onChandgeTime = (id, minutes, seconds) => {
+    setTaskListData((todoData) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[idx];
+      const newItem = {
+        ...oldItem,
+        minutes,
+        seconds,
       };
 
-      const onToggleDone = (id) => {
-        setTodoData(() => {
-          const idx = todoData.findIndex((el) => el.id === id);
-          const oldItem = todoData[idx];
-          const newItem = {
-            ...oldItem,
-            done: !oldItem.done,
-            isChecked: !oldItem.isChecked,
-          };
-    
-          return newArray(todoData, newItem, idx);
-        });
+      return newArray(todoData, newItem, idx);
+    });
+  };
+
+  const onToggleDone = (id) => {
+    setTaskListData(() => {
+      const idx = taskListData.findIndex((el) => el.id === id);
+      const oldItem = taskListData[idx];
+      const newItem = {
+        ...oldItem,
+        done: !oldItem.done,
+        isChecked: !oldItem.isChecked,
       };
 
-      const onRename = (id) => {
-        setTodoData(() => {
-          const idx = todoData.findIndex((el) => el.id === id);
-          const oldItem = todoData[idx];
-          const newItem = {
-            ...oldItem,
-    
-            isRename: !oldItem.isRename,
-          };
-    
-          return newArray(todoData, newItem, idx);
-        });
-      };
-    
-      const deleteItem = (id) => {
-        setTodoData(() => {
-          const idx = todoData.findIndex((el) => el.id === id);
-          return [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
-        });
+      return newArray(taskListData, newItem, idx);
+    });
+  };
+
+  const onRename = (id) => {
+    setTaskListData(() => {
+      const idx = taskListData.findIndex((el) => el.id === id);
+      const oldItem = taskListData[idx];
+      const newItem = {
+        ...oldItem,
+
+        isRename: !oldItem.isRename,
       };
 
+      return newArray(taskListData, newItem, idx);
+    });
+  };
 
-     return ({ todoData, deleteItem, onToggleDone, onRename, onChandgeTime, activeButton });
-    } ,
-    [todoData,   activeButton]
-  );
+  const deleteItem = (id) => {
+    setTaskListData(() => {
+      const idx = taskListData.findIndex((el) => el.id === id);
+      return [...taskListData.slice(0, idx), ...taskListData.slice(idx + 1)];
+    });
+  };
+
+  const deleteItemCompleted = () => {
+    const newArr = [...taskListData].filter((el) => !el.done);
+    setTaskListData(() => newArr);
+  };
+  const clickButtonFilter = (name) => {
+    setActiveButtonFilter(name);
+  };
+
   return (
     <section className="todoapp">
       <NewTaskForm onItemAdded={addItem} />
       <section className="main">
-        <Context.Provider value={taskList}>
-          <TaskList />
-        </Context.Provider>
-        <Context.Provider value={footer}>
-          <Footer />
-        </Context.Provider>
+        <TaskList
+          todoData={taskListData}
+          deleteItem={deleteItem}
+          onToggleDone={onToggleDone}
+          onRename={onRename}
+          onChandgeTime={onChandgeTime}
+          activeButtonFilter={activeButtonFilter}
+        />
+        <Footer
+          todoCount={todoCount}
+          deleteItemCompleted={deleteItemCompleted}
+          clickButtonFilter={clickButtonFilter}
+          activeButtonFilter={activeButtonFilter}
+        />
       </section>
     </section>
   );

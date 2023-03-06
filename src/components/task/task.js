@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 
@@ -12,15 +12,11 @@ export default function Task({
   isChecked,
   isRename,
   createDate,
-
   onDeleted,
   onToggleDone,
   onRename,
   onChandgeTime,
 }) {
-
-  
-
   const [taskState, setTaskState] = useState({
     taskLabel: label,
     submitLabel: label,
@@ -30,11 +26,10 @@ export default function Task({
   });
 
   const { taskLabel, count, workCount } = taskState;
-  
+
   let timerMinutes = minutes;
 
   useEffect(() => {
-
     let intervalId;
     let timerSeconds = seconds;
     if (workCount && !isTimer) {
@@ -48,7 +43,7 @@ export default function Task({
         }
 
         onChandgeTime(id, timerMinutes, timerSeconds);
-        setTaskState(()=>({ ...taskState, count: `${timerMinutes}:${timerSeconds}` }));
+        setTaskState(() => ({ ...taskState, count: `${timerMinutes}:${timerSeconds}` }));
       }, 1000);
     }
 
@@ -65,12 +60,11 @@ export default function Task({
           }
         }
         onChandgeTime(id, timerMinutes, timerSeconds);
-        setTaskState(()=>({ ...taskState, count: `${timerMinutes}:${timerSeconds}` }));
+        setTaskState(() => ({ ...taskState, count: `${timerMinutes}:${timerSeconds}` }));
       }, 1000);
     }
     return () => clearInterval(intervalId);
   }, [workCount, isChecked, seconds, isTimer, id, timerMinutes, onChandgeTime, taskState]);
-
 
   const onKeyDown = (e) => {
     if (e.keyCode === 27) {
@@ -132,6 +126,7 @@ export default function Task({
       </form>
     );
   }
+
   return (
     <div className={classNames}>
       <input className="toggle" type="checkbox" onChange={checked} checked={isChecked} />

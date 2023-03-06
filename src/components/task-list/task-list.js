@@ -1,24 +1,20 @@
 import PropTypes from 'prop-types';
-import { useContext } from 'react';
 
-import Context from '../../context';
 import Task from '../task';
 
-function TaskList() {
-  const { todoData, deleteItem, onToggleDone, onRename, onChandgeTime, activeButton } = useContext(Context);
-
+function TaskList({ todoData, deleteItem, onToggleDone, onRename, onChandgeTime, activeButtonFilter }) {
   const elements = todoData.map((el) => {
     const { id, ...itemProps } = el;
 
     let displayClass;
 
-    if (activeButton === 'all') {
+    if (activeButtonFilter === 'all') {
       displayClass = '';
     }
-    if ((activeButton === 'active' && !el.done) || (activeButton === 'completed' && el.done)) {
+    if ((activeButtonFilter === 'active' && !el.done) || (activeButtonFilter === 'completed' && el.done)) {
       displayClass = '';
     }
-    if ((activeButton === 'active' && el.done) || (activeButton === 'completed' && !el.done)) {
+    if ((activeButtonFilter === 'active' && el.done) || (activeButtonFilter === 'completed' && !el.done)) {
       displayClass = 'disnone';
     }
 

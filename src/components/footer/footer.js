@@ -1,14 +1,10 @@
-import { useContext } from 'react';
-
-import Context from '../../context';
 import TaskFilter from '../task-filter';
 
-function Footer() {
-  const { todoCount, deleteItemCompleted, clickButtonFilter, activeButton } = useContext(Context);
+function Footer({ todoCount, deleteItemCompleted, clickButtonFilter, activeButtonFilter }) {
   return (
     <footer className="footer">
       <span className="todo-count">{todoCount} items left</span>
-      <TaskFilter clickButtonFilter={clickButtonFilter} activeButton={activeButton} />
+      <TaskFilter clickButtonFilter={clickButtonFilter} activeButtonFilter={activeButtonFilter} />
       <button type="button" className="clear-completed" onClick={deleteItemCompleted}>
         Clear completed
       </button>

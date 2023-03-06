@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-export default function TaskFilter({ clickButtonFilter, activeButton }) {
+export default function TaskFilter({ clickButtonFilter, activeButtonFilter }) {
   const buttons = [
     { name: 'all', label: 'All' },
     { name: 'active', label: 'Active' },
@@ -8,8 +8,8 @@ export default function TaskFilter({ clickButtonFilter, activeButton }) {
   ];
 
   const buttonFilter = buttons.map(({ name, label }) => {
-    const isActive = activeButton === name;
-    const classButtonFilter = isActive ? 'selected' : '';
+  const isActive = activeButtonFilter === name;
+  const classButtonFilter = isActive ? 'selected' : '';
 
     return (
       <li key={name}>
@@ -25,10 +25,10 @@ export default function TaskFilter({ clickButtonFilter, activeButton }) {
 
 TaskFilter.propTypes = {
   clickButtonFilter: PropTypes.func,
-  activeButton: PropTypes.string,
+  activeButtonFilter: PropTypes.string,
 };
 
 TaskFilter.defaultProps = {
   clickButtonFilter: undefined,
-  activeButton: 'all',
+  activeButtonFilter: 'all',
 };
