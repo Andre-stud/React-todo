@@ -9,21 +9,19 @@ export default function App() {
   const [activeButtonFilter, setActiveButtonFilter] = useState('all');
   const [maxId, setMaxId] = useState(100);
 
-  const createTodoItem = (label, date, minutes, seconds, isTimer) => ({
+  const createTodoItem = (label, date, timeValue, isTimer) => ({
     label,
     done: false,
     id: maxId,
-    isChecked: false,
     isRename: false,
     createDate: date,
-    minutes,
-    seconds,
+    timeValue,
     isTimer,
   });
 
-  const addItem = (task, date, minutes, seconds, isTimer) => {
+  const addItem = (task, date, timeValue, isTimer) => {
     setTaskListData(() => {
-      const element = createTodoItem(task, date, minutes, seconds, isTimer);
+      const element = createTodoItem(task, date, timeValue, isTimer);
       setMaxId(maxId + 1);
       return [...taskListData, element];
     });
@@ -34,14 +32,13 @@ export default function App() {
   const doneCount = taskListData.filter((el) => el.done).length;
   const todoCount = taskListData.length - doneCount;
 
-  const onChandgeTime = (id, minutes, seconds) => {
+  const onChandgeTime = (id, timeValue) => {
     setTaskListData((todoData) => {
       const idx = todoData.findIndex((el) => el.id === id);
       const oldItem = todoData[idx];
       const newItem = {
         ...oldItem,
-        minutes,
-        seconds,
+        timeValue,
       };
 
       return newArray(todoData, newItem, idx);
@@ -49,16 +46,15 @@ export default function App() {
   };
 
   const onToggleDone = (id) => {
-    setTaskListData(() => {
-      const idx = taskListData.findIndex((el) => el.id === id);
-      const oldItem = taskListData[idx];
+    setTaskListData((todoData) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[idx];
       const newItem = {
         ...oldItem,
         done: !oldItem.done,
-        isChecked: !oldItem.isChecked,
       };
 
-      return newArray(taskListData, newItem, idx);
+      return newArray(todoData, newItem, idx);
     });
   };
 
@@ -96,7 +92,7 @@ export default function App() {
       <NewTaskForm onItemAdded={addItem} />
       <section className="main">
         <TaskList
-          todoData={taskListData}
+          taskListData={taskListData}
           deleteItem={deleteItem}
           onToggleDone={onToggleDone}
           onRename={onRename}

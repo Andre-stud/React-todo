@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 
 import Task from '../task';
 
-function TaskList({ todoData, deleteItem, onToggleDone, onRename, onChandgeTime, activeButtonFilter }) {
-  const elements = todoData.map((el) => {
+function TaskList({ taskListData, deleteItem, onToggleDone, onRename, onChandgeTime, activeButtonFilter }) {
+  const elements = taskListData.map((el) => {
     const { id, ...itemProps } = el;
 
     let displayClass;

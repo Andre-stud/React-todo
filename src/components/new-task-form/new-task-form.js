@@ -17,6 +17,9 @@ export default function NewTaskForm({ onItemAdded }) {
 
     let { minutes, seconds, isTimer } = taskData;
 
+    minutes = Number(minutes);
+    seconds = Number(seconds);
+
     if (!minutes && !seconds) {
       isTimer = false;
     }
@@ -29,7 +32,9 @@ export default function NewTaskForm({ onItemAdded }) {
       seconds = 0;
     }
 
-    onItemAdded(taskData.label, new Date(), minutes, seconds, isTimer);
+    const timeValue = minutes * 60 + seconds;
+
+    onItemAdded(taskData.label, new Date(), timeValue, isTimer);
 
     setTaskData({ label: '', minutes: '', seconds: '', isTimer: true });
   };

@@ -8,8 +8,8 @@ export default function TaskFilter({ clickButtonFilter, activeButtonFilter }) {
   ];
 
   const buttonFilter = buttons.map(({ name, label }) => {
-  const isActive = activeButtonFilter === name;
-  const classButtonFilter = isActive ? 'selected' : '';
+    const isActive = activeButtonFilter === name;
+    const classButtonFilter = isActive ? 'selected' : '';
 
     return (
       <li key={name}>

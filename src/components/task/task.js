@@ -1,15 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 
 export default function Task({
   label,
-  seconds,
-  minutes,
+  timeValue,
   isTimer,
   id,
   done,
-  isChecked,
   isRename,
   createDate,
   onDeleted,
@@ -17,54 +15,53 @@ export default function Task({
   onRename,
   onChandgeTime,
 }) {
+  
+  const countValue = useCallback((value) => {
+    const minutes = Math.trunc(value / 60);
+    const seconds = value - minutes * 60;
+
+    const time = `${minutes}:${seconds}`;
+    return time;
+  }, []);
+
   const [taskState, setTaskState] = useState({
     taskLabel: label,
     submitLabel: label,
-    count: `${minutes}:${seconds}`,
+    count: countValue(timeValue),
     workCount: false,
     isTimer,
   });
 
   const { taskLabel, count, workCount } = taskState;
 
-  let timerMinutes = minutes;
-
   useEffect(() => {
     let intervalId;
-    let timerSeconds = seconds;
+
     if (workCount && !isTimer) {
       intervalId = setInterval(() => {
-        timerSeconds++;
+        timeValue++;
 
-        if (timerSeconds === 60) {
-          timerMinutes++;
-
-          timerSeconds = 0;
-        }
-
-        onChandgeTime(id, timerMinutes, timerSeconds);
-        setTaskState(() => ({ ...taskState, count: `${timerMinutes}:${timerSeconds}` }));
+        onChandgeTime(id, timeValue);
+        setTaskState(() => ({ ...taskState, count: countValue(timeValue) }));
       }, 1000);
     }
 
     if (workCount && isTimer) {
+      // eslint-disable-next-line consistent-return
       intervalId = setInterval(() => {
-        timerSeconds--;
-        if (timerSeconds === -1) {
-          timerSeconds = 0;
-          if (timerMinutes >= 1) {
-            timerMinutes--;
-            timerSeconds = 59;
-          } else {
-            clearInterval(intervalId);
-          }
+        timeValue--;
+
+        if (timeValue === 0) {
+          setTaskState(() => ({ ...taskState, count: countValue(timeValue), workCount: false }));
+
+          return clearInterval(intervalId);
         }
-        onChandgeTime(id, timerMinutes, timerSeconds);
-        setTaskState(() => ({ ...taskState, count: `${timerMinutes}:${timerSeconds}` }));
+        onChandgeTime(id, timeValue);
+        setTaskState(() => ({ ...taskState, count: countValue(timeValue) }));
       }, 1000);
     }
     return () => clearInterval(intervalId);
-  }, [workCount, isChecked, seconds, isTimer, id, timerMinutes, onChandgeTime, taskState]);
+  }, [countValue, id, isTimer, onChandgeTime, taskState, timeValue, workCount]);
 
   const onKeyDown = (e) => {
     if (e.keyCode === 27) {
@@ -103,14 +100,11 @@ export default function Task({
     onToggleDone(id);
   };
 
-  const changeName = () => {
-    setTaskState({ ...taskState, workCount: false });
-    onRename(id);
-  };
-
+  let isChecked = false;
   let classNames = 'view';
   if (done) {
     classNames = 'completed';
+    isChecked = true;
   }
   if (isRename) {
     return (
@@ -143,7 +137,7 @@ export default function Task({
           {`created ${formatDistanceToNow(createDate, { includeSeconds: true })} ago`}
         </span>
       </label>
-      <button type="button" aria-label="icon-edit" className="icon icon-edit" onClick={changeName} />
+      <button type="button" aria-label="icon-edit" className="icon icon-edit" onClick={onRename} />
       <button type="button" aria-label="icon-destroy" className="icon icon-destroy" onClick={onDeleted} />
     </div>
   );
@@ -154,7 +148,6 @@ Task.propTypes = {
   onDeleted: PropTypes.func,
   onToggleDone: PropTypes.func,
   done: PropTypes.bool,
-  isChecked: PropTypes.bool,
   onRename: PropTypes.func,
   isRename: PropTypes.bool,
 };
@@ -164,7 +157,6 @@ Task.defaultProps = {
   onDeleted: undefined,
   onToggleDone: undefined,
   done: false,
-  isChecked: false,
   onRename: undefined,
   isRename: false,
 };
